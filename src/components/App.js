@@ -11,7 +11,8 @@ import {
   loadProvider,
   loadNetwork,
   loadAccount,
-  loadTokens
+  loadTokens,
+  loadAMM
 } from '../store/interactions'
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
 
     // Initiate contracts
     await loadTokens(provider, chainId, dispatch)
+    await loadAMM(provider, chainId, dispatch)
   }
 
   useEffect(() => {
