@@ -16,8 +16,6 @@ import {
 } from '../store/interactions'
 
 function App() {
-  let account = '0x0...'
-
   const dispatch = useDispatch()
 
   const loadBlockchainData = async () => {
@@ -40,7 +38,7 @@ function App() {
 
   return(
     <Container>
-      <Navigation account={account} />
+      <Navigation />
 
       <h1 className='my-4 text-center'>React Hardhat Template</h1>
 
