@@ -25,7 +25,7 @@ function App() {
     const chainId = await loadNetwork(provider, dispatch)
 
     // Fetch accounts
-    await loadAccount(dispatch)
+    // await loadAccount(dispatch)
 
     // Initiate contracts
     await loadTokens(provider, chainId, dispatch)
