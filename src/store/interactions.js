@@ -16,7 +16,8 @@ import {
 	setContract,
 	sharesLoaded,
 	swapRequest,
-	swapSuccess
+	swapSuccess,
+	swapFail
 } from './reducers/amm'
 
 import TOKEN_ABI from '../abis/Token.json'
@@ -82,24 +83,26 @@ export const loadBalances = async (amm, tokens, account, dispatch) => {
 // SWAP
 
 export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
-	// Tell Redux that the user is swapping...
-	dispatch(swapRequest())
+	try{
+		dispatch(swapRequest())
 
-	let transaction
+		let transaction
 
-	const signer = await provider.getSigner()
+		const signer = await provider.getSigner()
 
-	transaction = await token.connect(signer).approve(amm.address, amount)
-	await transaction.wait()
+		transaction = await token.connect(signer).approve(amm.address, amount)
+		await transaction.wait()
 
-	if (symbol === 'DAPP') {
-		transaction = await amm.connect(signer).swapToken1(amount)
-	} else {
-		transaction = await amm.connect(signer).swapToken2(amount)
-	}
+		if (symbol === 'DAPP') {
+			transaction = await amm.connect(signer).swapToken1(amount)
+		} else {
+			transaction = await amm.connect(signer).swapToken2(amount)
+		}
 
-	await transaction.wait()
+		await transaction.wait()
 
-// Tell redux that swap has finished
-	dispatch(swapSuccess(transaction.hash))
+		dispatch(swapSuccess(transaction.hash))
+  } catch (error) {
+  	dispatch(swapFail())
+  }
 }
