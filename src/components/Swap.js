@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
@@ -8,7 +9,35 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 
 const Swap = () => {
+	const [inputToken, setInputToken] = useState(null)
+	const [outputToken, setOutputToken] = useState(null)
+
+	const [price, setPrice] = useState(0)
+
 	const account = useSelector(state => state.provider.account)
+
+	const tokens = useSelector(state => state.tokens.contracts)
+
+	const amm = useSelector(state => state.amm.contract)
+
+	const getPrice = async () => {
+		if (inputToken === outputToken) {
+			setPrice(0)
+			return
+		}
+
+		if (inputToken === 'DAPP') {
+			setPrice(await amm.token1Balance() / await amm.token2Balance())
+		} else {
+			setPrice(await amm.token2Balance() / await amm.token1Balance())
+		}
+	}
+
+	useEffect(() => {
+		if(inputToken && outputToken){
+			getPrice()
+		}
+	}, [inputToken, outputToken]);
 
 	return (
 		<div>
@@ -28,15 +57,14 @@ const Swap = () => {
 									placeholder="0.0"
 									min="0.0"
 									step="any"
-									value={0}
 									disabled={false}
 								/>
 								<DropdownButton
 									variant="outline-secondary"
-									title="Select Token"
+									title={inputToken ? inputToken : "Select Token"}
 								>
-									<Dropdown.Item>DAPP</Dropdown.Item>
-									<Dropdown.Item>USD</Dropdown.Item>
+									<Dropdown.Item onClick={(e) => setInputToken(e.target.innerHTML)} >DAPP</Dropdown.Item>
+									<Dropdown.Item onClick={(e) => setInputToken(e.target.innerHTML)} >USD</Dropdown.Item>
 								</DropdownButton>
 							</InputGroup>
 						</Row>
@@ -51,22 +79,21 @@ const Swap = () => {
 								<Form.Control
 									type="number"
 									placeholder="0.0"
-									value={0}
 									disabled
 								/>
 								<DropdownButton
 									variant="outline-secondary"
-									title="Select Token"
+									title={outputToken ? outputToken : "Select Token"}
 								>
-									<Dropdown.Item>DAPP</Dropdown.Item>
-									<Dropdown.Item>USD</Dropdown.Item>
+									<Dropdown.Item onClick={(e) => setOutputToken(e.target.innerHTML)} >DAPP</Dropdown.Item>
+									<Dropdown.Item onClick={(e) => setOutputToken(e.target.innerHTML)} >USD</Dropdown.Item>
 								</DropdownButton>
 							</InputGroup>
 						</Row>
 						<Row className='my-3'>
 							<Button type='submit'>Swap</Button>
 							<Form.Text muted>
-								Exchange Rate:
+								Exchange Rate: {price}
 							</Form.Text>
 						</Row>
 					</Form>
