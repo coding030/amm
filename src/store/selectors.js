@@ -19,7 +19,10 @@ export const chartSelector = createSelector(swaps, tokens, (swaps, tokens) => {
   // Fetch prices
   const prices = swaps.map(s => s.rate)
 
+  swaps = swaps.sort((a, b) => b.args.timestamp - a.args.timestamp)
+
   return({
+    swaps: swaps,
     series: [{
       name: "Rate",
       data: prices
