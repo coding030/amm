@@ -10,7 +10,7 @@ import { ethers } from 'ethers'
 
 import Alert from './Alert'
 
-import { removeLiquidity } from '../store/interactions'
+import { removeLiquidity, loadBalances } from '../store/interactions'
 
 const Withdraw = () => {
 	const [amount, setAmount] = useState(0)
@@ -40,7 +40,10 @@ const Withdraw = () => {
 
 		await removeLiquidity(provider, amm, _shares, dispatch)
 
+		await loadBalances(amm, tokens, account, dispatch)
+
 		setShowAlert(true)
+		setAmount(0)
 	}
 
 	return (
@@ -59,6 +62,7 @@ const Withdraw = () => {
 									min="0.0"
 									step="any"
 									id="shares"
+									value={amount === 0 ? "" : amount}
 									onChange={(e) => setAmount(e.target.value)}
 								/>
 								<InputGroup.Text style={{ width: "100px" }} className="justify-content-center">
