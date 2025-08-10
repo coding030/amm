@@ -14,6 +14,11 @@ const Withdraw = () => {
 	const provider = useSelector(state => state.provider.connection)
 	const account = useSelector(state => state.provider.account)
 
+	const shares = useSelector(state => state.amm.shares)
+
+	const tokens = useSelector(state => state.tokens.contracts)
+	const balances = useSelector(state => state.tokens.balances)
+
 	const withdrawHandler = async (e) => {
 		e.preventDefault()
 
@@ -27,7 +32,7 @@ const Withdraw = () => {
 					<Form onSubmit={withdrawHandler} style={{ maxWidth: '450px', margin: '50px auto' }}>
 						<Row>
 							<Form.Text className='text-end my-2' muted>
-								Shares: {0}
+								Shares: {shares}
 							</Form.Text>
 							<InputGroup>
 								<Form.Control
@@ -47,8 +52,8 @@ const Withdraw = () => {
 						</Row>
 						<hr />
 						<Row>
-							<p><strong>DAPP Balance:</strong> 0</p>
-							<p><strong>USD Balance:</strong> 0</p>
+							<p><strong>DAPP Balance:</strong> {balances[0]}</p>
+							<p><strong>USD Balance:</strong> {balances[1]}</p>
 						</Row>
 					</Form>
 				) : (
